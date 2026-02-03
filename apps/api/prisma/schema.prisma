@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== KB4 ====================
+model KB4User {
+  id                    String    @id @default(cuid())
+  userId                String    @unique @map("user_id")
+  email                 String
+  firstName             String    @map("first_name")
+  lastName              String    @map("last_name")
+  department            String?
+  division              String?
+  location              String?
+  jobTitle              String?   @map("job_title")
+  managerName           String?   @map("manager_name")
+  managerEmail          String?   @map("manager_email")
+  employeeNumber        String?   @map("employee_number")
+  status                String    @default("active")
+  organization          String?
+  currentRiskScore      Float     @default(0) @map("current_risk_score")
+  phishPronePercentage  Float     @default(0) @map("phish_prone_percentage")
+  lastSignIn            DateTime? @map("last_sign_in")
+  syncedAt              DateTime  @default(now()) @map("synced_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  @@map("kb4_users")
+  @@index([email])
+  @@index([department])
+  @@index([currentRiskScore])
+}
+
+// ==================== NCM ====================
+model NCMDevice {
+  id                  String   @id @default(cuid())
+  deviceName          String   @map("device_name")
+  deviceIp            String?  @map("device_ip")
+  hwModel             String?  @map("hw_model")
+  fwSeries            String?  @map("fw_series")
+  fwVersion           String?  @map("fw_version")
+  updatePriority      String   @map("update_priority")
+  totalCveInstances   Int      @default(0) @map("total_cve_instances")
+  maxKevActiveExploit Int      @default(0) @map("max_kev_active_exploit")
+  maxCriticalCve      Int      @default(0) @map("max_critical_cve")
+  maxCvss             Float    @default(0) @map("max_cvss")
+  actionRequired      String?  @map("action_required")
+  syncedAt            DateTime @default(now()) @map("synced_at")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@map("ncm_devices")
+  @@unique([deviceName, deviceIp])
+  @@index([updatePriority])
+  @@index([maxCvss])
+}
+
+// ==================== EDR ====================
+model EDRAlert {
+  id          String    @id @default(cuid())
+  severity    String
+  detectedAt  DateTime  @map("detected_at")
+  hostname    String
+  ioaName     String    @map("ioa_name")
+  domain      String?
+  fileSha256  String?   @map("file_sha256")
+  filePath    String?   @map("file_path")
+  vtVerdict   String?   @map("vt_verdict")
+  status      String    @default("new")
+  assignedTo  String?   @map("assigned_to")
+  resolvedAt  DateTime? @map("resolved_at")
+  syncedAt    DateTime  @default(now()) @map("synced_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("edr_alerts")
+  @@index([severity])
+  @@index([status])
+  @@index([detectedAt])
+  @@index([hostname])
+}
+
+// ==================== HIBP ====================
+model HIBPBreach {
+  id           String    @id @default(cuid())
+  domain       String
+  email        String
+  alias        String?
+  breachName   String    @map("breach_name")
+  breachDate   DateTime? @map("breach_date")
+  discoveredAt DateTime  @default(now()) @map("discovered_at")
+  status       String    @default("new")
+  syncedAt     DateTime  @default(now()) @map("synced_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("hibp_breaches")
+  @@unique([email, breachName])
+  @@index([email])
+  @@index([status])
+  @@index([discoveredAt])
+}
+
+// ==================== 歷史快照 (趨勢分析用) ====================
+model DailySnapshot {
+  id                    String   @id @default(cuid())
+  date                  DateTime @db.Date
+  
+  // KB4 指標
+  kb4TotalUsers         Int      @default(0) @map("kb4_total_users")
+  kb4HighRiskUsers      Int      @default(0) @map("kb4_high_risk_users")
+  kb4AvgRiskScore       Float    @default(0) @map("kb4_avg_risk_score")
+  kb4AvgPhishProneRate  Float    @default(0) @map("kb4_avg_phish_prone_rate")
+  
+  // NCM 指標
+  ncmTotalDevices       Int      @default(0) @map("ncm_total_devices")
+  ncmP0Devices          Int      @default(0) @map("ncm_p0_devices")
+  ncmP1Devices          Int      @default(0) @map("ncm_p1_devices")
+  ncmTotalCves          Int      @default(0) @map("ncm_total_cves")
+  
+  // EDR 指標
+  edrTotalAlerts        Int      @default(0) @map("edr_total_alerts")
+  edrHighAlerts         Int      @default(0) @map("edr_high_alerts")
+  edrPendingAlerts      Int      @default(0) @map("edr_pending_alerts")
+  edrResolvedAlerts     Int      @default(0) @map("edr_resolved_alerts")
+  
+  // HIBP 指標
+  hibpTotalBreaches     Int      @default(0) @map("hibp_total_breaches")
+  hibpNewBreaches       Int      @default(0) @map("hibp_new_breaches")
+  hibpPendingBreaches   Int      @default(0) @map("hibp_pending_breaches")
+  
+  // 整體風險分數
+  overallRiskScore      Float    @default(0) @map("overall_risk_score")
+  
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  @@map("daily_snapshots")
+  @@unique([date])
+  @@index([date])
+}
+
+// ==================== 同步日誌 ====================
+model SyncLog {
+  id          String   @id @default(cuid())
+  source      String
+  status      String
+  recordCount Int      @default(0) @map("record_count")
+  duration    Int      @default(0)
+  error       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("sync_logs")
+  @@index([source])
+  @@index([createdAt])
+}
