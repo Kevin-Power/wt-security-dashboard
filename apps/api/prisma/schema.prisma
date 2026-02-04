@@ -51,6 +51,10 @@ model KB4User {
   @@index([email])
   @@index([department])
   @@index([currentRiskScore])
+  @@index([status])
+  @@index([status, currentRiskScore])
+  @@index([status, phishPronePercentage])
+  @@index([organization])
 }
 
 // ==================== NCM ====================
@@ -75,6 +79,9 @@ model NCMDevice {
   @@unique([deviceName, deviceIp])
   @@index([updatePriority])
   @@index([maxCvss])
+  @@index([updatePriority, maxCvss])
+  @@index([hwModel])
+  @@index([fwVersion])
 }
 
 // ==================== EDR ====================
@@ -100,6 +107,10 @@ model EDRAlert {
   @@index([status])
   @@index([detectedAt])
   @@index([hostname])
+  @@index([status, severity])
+  @@index([status, detectedAt])
+  @@index([hostname, detectedAt])
+  @@index([ioaName])
 }
 
 // ==================== HIBP ====================
@@ -121,6 +132,9 @@ model HIBPBreach {
   @@index([email])
   @@index([status])
   @@index([discoveredAt])
+  @@index([status, discoveredAt])
+  @@index([breachName])
+  @@index([domain])
 }
 
 // ==================== 歷史快照 (趨勢分析用) ====================

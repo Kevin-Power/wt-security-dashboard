@@ -1,14 +1,73 @@
+// Risk Weights
+export interface RiskWeights {
+  kb4: number;
+  ncm: number;
+  edr: number;
+  hibp: number;
+}
+
+// Data Quality
+export interface DataQuality {
+  hasData: boolean;
+  warnings: string[];
+}
+
 // Dashboard
 export interface DashboardData {
   timestamp: string;
   overallRiskScore: number;
   riskLevel: 'critical' | 'high' | 'medium' | 'low' | 'minimal';
+  riskColor: string;
+  weights: RiskWeights;
   sources: {
     kb4: KB4Stats;
     ncm: NCMStats;
     edr: EDRStats;
     hibp: HIBPStats;
   };
+  dataQuality: DataQuality;
+}
+
+export interface DashboardSummary {
+  timestamp: string;
+  counts: {
+    kb4_users: number;
+    ncm_devices: number;
+    edr_pending_alerts: number;
+    edr_new_alerts: number;
+    hibp_new_breaches: number;
+  };
+  lastSync: {
+    at: string;
+    status: string;
+  } | null;
+}
+
+export interface DashboardConfig {
+  timestamp: string;
+  config: {
+    weights: RiskWeights;
+    thresholds: Record<string, number>;
+    factors: Record<string, number>;
+  };
+}
+
+export interface RiskBreakdown {
+  timestamp: string;
+  breakdown: {
+    kb4: SourceBreakdown;
+    ncm: SourceBreakdown;
+    edr: SourceBreakdown;
+    hibp: SourceBreakdown;
+  };
+  calculationFactors: Record<string, number>;
+}
+
+export interface SourceBreakdown {
+  weight: number;
+  rawScore: number;
+  weightedScore: number;
+  factors: Record<string, number>;
 }
 
 export interface KB4Stats {
@@ -17,6 +76,7 @@ export interface KB4Stats {
   avgRiskScore: number;
   avgPhishProneRate: number;
   riskPercentage: number;
+  score: number;
 }
 
 export interface NCMStats {
@@ -29,6 +89,7 @@ export interface NCMStats {
   avgMaxCvss: number;
   totalCveInstances: number;
   criticalPercentage: number;
+  score: number;
 }
 
 export interface EDRStats {
@@ -47,6 +108,8 @@ export interface EDRStats {
   };
   pendingCount: number;
   pendingPercentage: number;
+  highSeverityPercentage: number;
+  score: number;
 }
 
 export interface HIBPStats {
@@ -59,6 +122,7 @@ export interface HIBPStats {
   };
   recentBreaches: number;
   pendingCount: number;
+  score: number;
 }
 
 // KB4
@@ -150,4 +214,58 @@ export interface PaginatedResponse<T> {
     total: number;
     totalPages: number;
   };
+}
+
+// Sync
+export interface SyncStatus {
+  isSyncing: boolean;
+  lastSyncTime: string | null;
+  lastSyncResult: {
+    kb4: { success: boolean; count: number };
+    ncm: { success: boolean; count: number };
+    edr: { success: boolean; count: number };
+    hibp: { success: boolean; count: number };
+    totalDuration: number;
+  } | null;
+}
+
+export interface SyncLog {
+  id: string;
+  source: string;
+  status: string;
+  recordCount: number;
+  duration: number;
+  error: string | null;
+  createdAt: string;
+}
+
+// Health
+export interface HealthStatus {
+  status: 'healthy' | 'degraded';
+  timestamp: string;
+  uptime: number;
+  version: string;
+  environment: string;
+  checks: {
+    database: {
+      status: 'connected' | 'disconnected' | 'error';
+      latency: number;
+    };
+    sync: {
+      isRunning: boolean;
+      lastRun: string | null;
+      lastResult: SyncStatus['lastSyncResult'];
+    };
+    cache: {
+      entries: number;
+    };
+  };
+  data: {
+    kb4Users: number;
+    ncmDevices: number;
+    edrAlerts: number;
+    hibpBreaches: number;
+  };
+  lastSyncLogs: SyncLog[];
+  responseTime: number;
 }
