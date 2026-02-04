@@ -4,6 +4,14 @@ import { env } from './config/index.js';
 import { startSyncJobs, manualSync } from './jobs/sync-job.js';
 import { prisma } from './services/db.js';
 
+// Routes
+import { dashboardRoutes } from './routes/dashboard.js';
+import { kb4Routes } from './routes/kb4.js';
+import { ncmRoutes } from './routes/ncm.js';
+import { edrRoutes } from './routes/edr.js';
+import { hibpRoutes } from './routes/hibp.js';
+import { trendsRoutes } from './routes/trends.js';
+
 const app = Fastify({
   logger: {
     level: env.NODE_ENV === 'development' ? 'debug' : 'info',
@@ -29,13 +37,24 @@ app.get('/health', async () => ({
 app.get('/api', async () => ({
   name: 'WT Security Dashboard API',
   version: '1.0.0',
-  endpoints: [
-    'GET /health',
-    'GET /api',
-    'POST /api/sync?source=all|kb4|ncm|edr|hibp',
-    'GET /api/sync/logs?limit=50',
-  ],
+  modules: {
+    dashboard: ['GET /api/dashboard', 'GET /api/dashboard/summary'],
+    kb4: ['GET /api/kb4/users', 'GET /api/kb4/stats', 'GET /api/kb4/by-department', 'GET /api/kb4/high-risk'],
+    ncm: ['GET /api/ncm/devices', 'GET /api/ncm/stats', 'GET /api/ncm/by-priority', 'GET /api/ncm/critical'],
+    edr: ['GET /api/edr/alerts', 'GET /api/edr/stats', 'PATCH /api/edr/alerts/:id', 'GET /api/edr/pending'],
+    hibp: ['GET /api/hibp/breaches', 'GET /api/hibp/stats', 'PATCH /api/hibp/breaches/:id', 'GET /api/hibp/pending'],
+    trends: ['GET /api/trends/daily', 'POST /api/trends/snapshot', 'GET /api/trends/comparison'],
+    sync: ['POST /api/sync', 'GET /api/sync/logs'],
+  },
 }));
+
+// Register routes
+await app.register(dashboardRoutes);
+await app.register(kb4Routes);
+await app.register(ncmRoutes);
+await app.register(edrRoutes);
+await app.register(hibpRoutes);
+await app.register(trendsRoutes);
 
 // 手動觸發同步 API
 app.post('/api/sync', async (request) => {
@@ -81,7 +100,7 @@ try {
   // 啟動排程任務
   startSyncJobs();
   
-  // 生產環境：啟動時執行一次同步
+  // 生產環境：啟動時執行一次同步和建立快照
   if (env.NODE_ENV === 'production') {
     setTimeout(async () => {
       app.log.info('Running initial sync...');
@@ -89,7 +108,7 @@ try {
         await manualSync.all();
         app.log.info('Initial sync completed');
       } catch (error) {
-        app.log.error('Initial sync failed:', error);
+        app.log.error({ err: error }, 'Initial sync failed');
       }
     }, 5000);
   }
