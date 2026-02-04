@@ -5,12 +5,14 @@ import { startSyncJobs, manualSync } from './jobs/sync-job.js';
 import { prisma } from './services/db.js';
 
 // Routes
+import { authRoutes } from './routes/auth.js';
 import { dashboardRoutes } from './routes/dashboard.js';
 import { kb4Routes } from './routes/kb4.js';
 import { ncmRoutes } from './routes/ncm.js';
 import { edrRoutes } from './routes/edr.js';
 import { hibpRoutes } from './routes/hibp.js';
 import { trendsRoutes } from './routes/trends.js';
+import { createInitialAdmin } from './services/auth.js';
 
 const app = Fastify({
   logger: {
@@ -38,6 +40,7 @@ app.get('/api', async () => ({
   name: 'WT Security Dashboard API',
   version: '1.0.0',
   modules: {
+    auth: ['POST /api/auth/register', 'POST /api/auth/login', 'GET /api/auth/me', 'GET /api/auth/users', 'PUT /api/auth/users/:id', 'POST /api/auth/change-password'],
     dashboard: ['GET /api/dashboard', 'GET /api/dashboard/summary'],
     kb4: ['GET /api/kb4/users', 'GET /api/kb4/stats', 'GET /api/kb4/by-department', 'GET /api/kb4/high-risk'],
     ncm: ['GET /api/ncm/devices', 'GET /api/ncm/stats', 'GET /api/ncm/by-priority', 'GET /api/ncm/critical'],
@@ -49,6 +52,7 @@ app.get('/api', async () => ({
 }));
 
 // Register routes
+await app.register(authRoutes, { prefix: '/api/auth' });
 await app.register(dashboardRoutes);
 await app.register(kb4Routes);
 await app.register(ncmRoutes);
@@ -96,6 +100,9 @@ process.on('SIGTERM', shutdown);
 try {
   await app.listen({ port: env.PORT, host: '0.0.0.0' });
   app.log.info(`Server running on http://localhost:${env.PORT}`);
+  
+  // 建立初始管理員帳號
+  await createInitialAdmin();
   
   // 啟動排程任務
   startSyncJobs();

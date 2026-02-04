@@ -14,6 +14,8 @@ const envSchema = z.object({
   SHEET_ID_EDR: z.string(),
   SHEET_ID_HIBP: z.string(),
   SYNC_INTERVAL: z.coerce.number().default(15),
+  JWT_SECRET: z.string().default('wt-security-dashboard-secret-key-2024'),
+  JWT_EXPIRES_IN: z.string().default('7d'),
 });
 
 export const env = envSchema.parse(process.env);

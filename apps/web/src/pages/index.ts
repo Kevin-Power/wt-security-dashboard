@@ -4,3 +4,4 @@ export * from './NCMPage';
 export * from './EDRPage';
 export * from './HIBPPage';
 export * from './TrendsPage';
+export * from './LoginPage';
