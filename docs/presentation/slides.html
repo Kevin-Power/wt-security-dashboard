@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WT 資安情資中心 - 管理層簡報</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .slide { display: none; min-height: 100vh; }
+    .slide.active { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: fadeIn 0.5s ease-out; }
+    .progress-bar { transition: width 0.3s ease; }
+  </style>
+</head>
+<body class="bg-gray-900 text-white overflow-hidden">
+  <!-- Progress Bar -->
+  <div class="fixed top-0 left-0 right-0 h-1 bg-gray-700 z-50">
+    <div id="progress" class="progress-bar h-full bg-blue-500" style="width: 0%"></div>
+  </div>
+
+  <!-- Slide 1: Cover -->
+  <div class="slide active" data-slide="1">
+    <div class="flex flex-col items-center justify-center w-full p-12 animate-in">
+      <div class="w-24 h-24 bg-blue-600 rounded-2xl flex items-center justify-center mb-8">
+        <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+      </div>
+      <h1 class="text-6xl font-bold mb-4">WT 資安情資中心</h1>
+      <p class="text-2xl text-gray-400 mb-8">整合式資安風險管理平台</p>
+      <div class="text-gray-500">
+        <p>CISO Dashboard</p>
+        <p class="mt-2">2026 年 2 月</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 2: Agenda -->
+  <div class="slide" data-slide="2">
+    <div class="flex flex-col items-center justify-center w-full p-12 animate-in">
+      <h2 class="text-4xl font-bold mb-12">今日議程</h2>
+      <div class="grid grid-cols-2 gap-6 max-w-3xl">
+        <div class="flex items-center gap-4 bg-gray-800 rounded-xl p-6">
+          <span class="text-3xl font-bold text-blue-500">01</span>
+          <span class="text-xl">問題背景</span>
+        </div>
+        <div class="flex items-center gap-4 bg-gray-800 rounded-xl p-6">
+          <span class="text-3xl font-bold text-blue-500">02</span>
+          <span class="text-xl">解決方案</span>
+        </div>
+        <div class="flex items-center gap-4 bg-gray-800 rounded-xl p-6">
+          <span class="text-3xl font-bold text-blue-500">03</span>
+          <span class="text-xl">系統功能</span>
+        </div>
+        <div class="flex items-center gap-4 bg-gray-800 rounded-xl p-6">
+          <span class="text-3xl font-bold text-blue-500">04</span>
+          <span class="text-xl">效益分析</span>
+        </div>
+        <div class="flex items-center gap-4 bg-gray-800 rounded-xl p-6">
+          <span class="text-3xl font-bold text-blue-500">05</span>
+          <span class="text-xl">未來規劃</span>
+        </div>
+        <div class="flex items-center gap-4 bg-gray-800 rounded-xl p-6">
+          <span class="text-3xl font-bold text-blue-500">06</span>
+          <span class="text-xl">Q&A</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Problems -->
+  <div class="slide" data-slide="3">
+    <div class="flex flex-col items-center justify-center w-full p-12 animate-in">
+      <h2 class="text-4xl font-bold mb-12">我們面臨的挑戰</h2>
+      <div class="grid grid-cols-2 gap-8 max-w-5xl">
+        <div class="bg-red-900/30 border border-red-500/50 rounded-xl p-8">
+          <div class="text-red-400 text-5xl mb-4">4+</div>
+          <div class="text-xl font-semibold mb-2">系統分散</div>
+          <div class="text-gray-400">資安數據散落在不同系統，無法快速掌握全貌</div>
+        </div>
+        <div class="bg-red-900/30 border border-red-500/50 rounded-xl p-8">
+          <div class="text-red-400 text-5xl mb-4">4hr</div>
+          <div class="text-xl font-semibold mb-2">報表耗時</div>
+          <div class="text-gray-400">每週手動彙整報表，耗費大量人力</div>
+        </div>
+        <div class="bg-red-900/30 border border-red-500/50 rounded-xl p-8">
+          <div class="text-red-400 text-5xl mb-4">?</div>
+          <div class="text-xl font-semibold mb-2">缺乏統一指標</div>
+          <div class="text-gray-400">無法回答「整體風險是高還是低？」</div>
+        </div>
+        <div class="bg-red-900/30 border border-red-500/50 rounded-xl p-8">
+          <div class="text-red-400 text-5xl mb-4">0</div>
+          <div class="text-xl font-semibold mb-2">無歷史追蹤</div>
+          <div class="text-gray-400">無法驗證改善措施是否有效</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4: Solution -->
+  <div class="slide" data-slide="4">
+    <div class="flex flex-col items-center justify-center w-full p-12 animate-in">
+      <h2 class="text-4xl font-bold mb-12">解決方案</h2>
+      <div class="flex items-center gap-8 max-w-4xl">
+        <div class="bg-gray-800 rounded-xl p-8 text-center">
+          <div class="text-6xl font-bold text-blue-500 mb-4">4</div>
+          <div class="text-xl">個系統</div>
+        </div>
+        <svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+        <div class="bg-gray-800 rounded-xl p-8 text-center">
+          <div class="text-6xl font-bold text-green-500 mb-4">1</div>
+          <div class="text-xl">個儀表板</div>
+        </div>
+        <svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+        <div class="bg-gray-800 rounded-xl p-8 text-center">
+          <div class="text-6xl font-bold text-yellow-500 mb-4">1</div>
+          <div class="text-xl">個風險指標</div>
+        </div>
+      </div>
+      <p class="text-2xl text-gray-400 mt-12">一眼掌握企業整體資安態勢</p>
+    </div>
+  </div>
+
+  <!-- Slide 5: SSC Model -->
+  <div class="slide" data-slide="5">
+    <div class="flex flex-col items-center justify-center w-full p-12 animate-in">
+      <h2 class="text-4xl font-bold mb-8">Security Score Card</h2>
+      <p class="text-xl text-gray-400 mb-12">統一風險指標 (0-100)</p>
+      <div class="flex gap-6 mb-12">
+        <div class="bg-blue-900/30 border border-blue-500 rounded-xl p-6 text-center w-40">
+          <div class="text-4xl font-bold text-blue-400 mb-2">20%</div>
+          <div class="text-lg font-semibold">KB4</div>
+          <div class="text-sm text-gray-400">員工資安意識</div>
+        </div>
+        <div class="bg-orange-900/30 border border-orange-500 rounded-xl p-6 text-center w-40">
+          <div class="text-4xl font-bold text-orange-400 mb-2">35%</div>
+          <div class="text-lg font-semibold">NCM</div>
+          <div class="text-sm text-gray-400">設備漏洞</div>
+        </div>
+        <div class="bg-red-900/30 border border-red-500 rounded-xl p-6 text-center w-40">
+          <div class="text-4xl font-bold text-red-400 mb-2">30%</div>
+          <div class="text-lg font-semibold">EDR</div>
+          <div class="text-sm text-gray-400">威脅檢測</div>
+        </div>
+        <div class="bg-purple-900/30 border border-purple-500 rounded-xl p-6 text-center w-40">
+          <div class="text-4xl font-bold text-purple-400 mb-2">15%</div>
+          <div class="text-lg font-semibold">HIBP</div>
+          <div class="text-sm text-gray-400">帳號外洩</div>
+        </div>
+      </div>
+      <div class="flex gap-4">
+        <span class="px-4 py-2 bg-red-600 rounded-full">🔴 80+ 嚴重</span>
+        <span class="px-4 py-2 bg-orange-600 rounded-full">🟠 60-79 高</span>
+        <span class="px-4 py-2 bg-yellow-600 rounded-full">🟡 40-59 中</span>
+        <span class="px-4 py-2 bg-green-600 rounded-full">🟢 <40 低</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: Dashboard Screenshot -->
+  <div class="slide" data-slide="6">
+    <div class="flex flex-col items-center justify-center w-full p-12 animate-in">
+      <h2 class="text-4xl font-bold mb-8">系統總覽</h2>
+      <div class="bg-gray-800 rounded-2xl p-4 max-w-5xl w-full">
+        <img src="demo-dashboard.html" alt="Dashboard" class="rounded-lg w-full" style="background: #1f2937; padding: 20px;">
+        <div class="mt-4 text-center text-gray-400">
+          <p>💡 提示：用瀏覽器開啟 <code class="bg-gray-700 px-2 py-1 rounded">demo-dashboard.html</code> 查看完整 Demo</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: Benefits -->
+  <div class="slide" data-slide="7">
+    <div class="flex flex-col items-center justify-center w-full p-12 animate-in">
+      <h2 class="text-4xl font-bold mb-12">效益分析</h2>
+      <div class="grid grid-cols-3 gap-8 max-w-5xl">
+        <div class="bg-gradient-to-br from-blue-900 to-blue-800 rounded-xl p-8 text-center">
+          <div class="text-6xl font-bold text-blue-300 mb-4">98%</div>
+          <div class="text-xl font-semibold mb-2">時間節省</div>
+          <div class="text-gray-400">週報製作</div>
+          <div class="text-sm text-gray-500 mt-2">4小時 → 5分鐘</div>
+        </div>
+        <div class="bg-gradient-to-br from-green-900 to-green-800 rounded-xl p-8 text-center">
+          <div class="text-6xl font-bold text-green-300 mb-4">99%</div>
+          <div class="text-xl font-semibold mb-2">效率提升</div>
+          <div class="text-gray-400">風險評估</div>
+          <div class="text-sm text-gray-500 mt-2">2小時 → 即時</div>
+        </div>
+        <div class="bg-gradient-to-br from-purple-900 to-purple-800 rounded-xl p-8 text-center">
+          <div class="text-6xl font-bold text-purple-300 mb-4">100%</div>
+          <div class="text-xl font-semibold mb-2">可視化</div>
+          <div class="text-gray-400">風險透明度</div>
+          <div class="text-sm text-gray-500 mt-2">數據驅動決策</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8: Roadmap -->
+  <div class="slide" data-slide="8">
+    <div class="flex flex-col items-center justify-center w-full p-12 animate-in">
+      <h2 class="text-4xl font-bold mb-12">發展藍圖</h2>
+      <div class="flex gap-8 max-w-5xl">
+        <div class="flex-1 bg-green-900/30 border border-green-500 rounded-xl p-8">
+          <div class="text-green-400 font-bold mb-4">✅ Phase 1 - 已完成</div>
+          <ul class="space-y-2 text-gray-300">
+            <li>• 四大數據源整合</li>
+            <li>• SSC 風險評分模型</li>
+            <li>• 即時儀表板</li>
+            <li>• 趨勢分析</li>
+            <li>• 效能優化</li>
+          </ul>
+        </div>
+        <div class="flex-1 bg-blue-900/30 border border-blue-500 rounded-xl p-8">
+          <div class="text-blue-400 font-bold mb-4">🔜 Phase 2 - Q2 規劃</div>
+          <ul class="space-y-2 text-gray-300">
+            <li>• 自動化 PDF 報表</li>
+            <li>• Email/Slack 通知</li>
+            <li>• 行動版支援</li>
+            <li>• 更多數據源</li>
+          </ul>
+        </div>
+        <div class="flex-1 bg-gray-800 border border-gray-600 rounded-xl p-8">
+          <div class="text-gray-400 font-bold mb-4">📋 Phase 3 - 未來</div>
+          <ul class="space-y-2 text-gray-400">
+            <li>• AI 風險預測</li>
+            <li>• 自動化處理建議</li>
+            <li>• 合規報告</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9: Summary -->
+  <div class="slide" data-slide="9">
+    <div class="flex flex-col items-center justify-center w-full p-12 animate-in">
+      <h2 class="text-4xl font-bold mb-12">總結</h2>
+      <div class="space-y-6 max-w-3xl">
+        <div class="flex items-center gap-6 bg-gray-800 rounded-xl p-6">
+          <div class="text-4xl">🎯</div>
+          <div>
+            <div class="text-xl font-semibold">風險可視化</div>
+            <div class="text-gray-400">一個指標掌握整體資安態勢</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-6 bg-gray-800 rounded-xl p-6">
+          <div class="text-4xl">⏱️</div>
+          <div>
+            <div class="text-xl font-semibold">效率提升</div>
+            <div class="text-gray-400">節省 98% 報表製作時間</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-6 bg-gray-800 rounded-xl p-6">
+          <div class="text-4xl">📈</div>
+          <div>
+            <div class="text-xl font-semibold">持續改善</div>
+            <div class="text-gray-400">歷史趨勢支持決策</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-12 text-3xl font-bold text-blue-400">
+        「讓資安風險一目了然，讓決策有數據支撐。」
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 10: Q&A -->
+  <div class="slide" data-slide="10">
+    <div class="flex flex-col items-center justify-center w-full p-12 animate-in">
+      <h2 class="text-6xl font-bold mb-8">Q & A</h2>
+      <p class="text-2xl text-gray-400 mb-12">問題與討論</p>
+      <div class="grid grid-cols-2 gap-6 max-w-4xl text-left">
+        <div class="bg-gray-800 rounded-xl p-6">
+          <div class="text-blue-400 font-semibold mb-2">Q: 數據多久更新？</div>
+          <div class="text-gray-300">A: 每 15 分鐘自動同步</div>
+        </div>
+        <div class="bg-gray-800 rounded-xl p-6">
+          <div class="text-blue-400 font-semibold mb-2">Q: 權重可調整？</div>
+          <div class="text-gray-300">A: 可以，管理員可動態設定</div>
+        </div>
+        <div class="bg-gray-800 rounded-xl p-6">
+          <div class="text-blue-400 font-semibold mb-2">Q: 系統安全性？</div>
+          <div class="text-gray-300">A: JWT + 速率限制 + HTTPS</div>
+        </div>
+        <div class="bg-gray-800 rounded-xl p-6">
+          <div class="text-blue-400 font-semibold mb-2">Q: 故障影響？</div>
+          <div class="text-gray-300">A: 唯讀系統，不影響原系統</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 11: Thank You -->
+  <div class="slide" data-slide="11">
+    <div class="flex flex-col items-center justify-center w-full p-12 animate-in">
+      <h2 class="text-6xl font-bold mb-8">謝謝聆聽</h2>
+      <div class="w-24 h-24 bg-blue-600 rounded-2xl flex items-center justify-center mb-8">
+        <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+      </div>
+      <p class="text-2xl text-gray-400">WT 資安情資中心</p>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-4 bg-gray-800 rounded-full px-6 py-3">
+    <button id="prevBtn" class="p-2 hover:bg-gray-700 rounded-full disabled:opacity-50">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <span id="slideNum" class="text-lg font-mono">1 / 11</span>
+    <button id="nextBtn" class="p-2 hover:bg-gray-700 rounded-full">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Keyboard hint -->
+  <div class="fixed bottom-8 right-8 text-gray-500 text-sm">
+    ← → 或 空白鍵 切換
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 1;
+
+    function showSlide(n) {
+      if (n < 1) n = 1;
+      if (n > totalSlides) n = totalSlides;
+
+      slides.forEach(s => s.classList.remove('active'));
+      document.querySelector(`[data-slide="${n}"]`).classList.add('active');
+
+      currentSlide = n;
+      document.getElementById('slideNum').textContent = `${n} / ${totalSlides}`;
+      document.getElementById('progress').style.width = `${(n / totalSlides) * 100}%`;
+      document.getElementById('prevBtn').disabled = n === 1;
+      document.getElementById('nextBtn').disabled = n === totalSlides;
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => showSlide(currentSlide - 1));
+    document.getElementById('nextBtn').addEventListener('click', () => showSlide(currentSlide + 1));
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        showSlide(currentSlide + 1);
+      } else if (e.key === 'ArrowLeft') {
+        showSlide(currentSlide - 1);
+      }
+    });
+
+    showSlide(1);
+  </script>
+</body>
+</html>

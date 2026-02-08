@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WT 資安情資中心 - Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .animate-pulse-slow { animation: pulse 2s ease-in-out infinite; }
+    .gauge-fill { transition: stroke-dashoffset 1.5s ease-out; }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-gray-900">WT 資安情資中心</h1>
+          <p class="text-sm text-gray-500">CISO Dashboard</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="flex items-center gap-2 text-sm text-green-600">
+          <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse-slow"></span>
+          即時同步中
+        </span>
+        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          重新整理
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <div class="flex">
+    <aside class="w-64 bg-gray-900 min-h-screen p-4">
+      <nav class="space-y-2">
+        <a href="#" class="flex items-center gap-3 px-4 py-3 bg-blue-600 text-white rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+          </svg>
+          總覽
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          KB4 釣魚風險
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/>
+          </svg>
+          NCM 設備漏洞
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+          EDR 威脅警示
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+          </svg>
+          HIBP 帳號外洩
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+          </svg>
+          趨勢分析
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+      <div class="max-w-7xl mx-auto">
+        <!-- Page Title -->
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold text-gray-900">資安情資總覽</h2>
+          <p class="text-gray-500">WT 資安情資中心 - CISO Dashboard</p>
+        </div>
+
+        <!-- Risk Score + Trend -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <!-- Risk Gauge -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">整體風險指數</h3>
+            <div class="flex flex-col items-center">
+              <!-- SVG Gauge -->
+              <div class="relative" style="width: 200px; height: 120px;">
+                <svg width="200" height="120" class="transform">
+                  <!-- Background arc -->
+                  <path
+                    d="M 6 100 A 94 94 0 0 1 194 100"
+                    fill="none"
+                    stroke="#e5e7eb"
+                    stroke-width="12"
+                    stroke-linecap="round"
+                  />
+                  <!-- Progress arc (42%) -->
+                  <path
+                    d="M 6 100 A 94 94 0 0 1 194 100"
+                    fill="none"
+                    stroke="#ca8a04"
+                    stroke-width="12"
+                    stroke-linecap="round"
+                    stroke-dasharray="295.31"
+                    stroke-dashoffset="171.28"
+                    class="gauge-fill"
+                  />
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-end pb-2">
+                  <span class="text-4xl font-bold text-yellow-600">42</span>
+                  <span class="text-sm text-gray-500">/ 100</span>
+                </div>
+              </div>
+              <div class="mt-3 px-4 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">
+                風險等級: 中等
+              </div>
+              <!-- Weight breakdown -->
+              <div class="mt-4 w-full">
+                <div class="text-xs text-gray-500 mb-2 text-center">權重分配</div>
+                <div class="flex justify-center gap-2">
+                  <div class="flex flex-col items-center bg-gray-50 rounded px-3 py-1">
+                    <span class="text-xs font-medium text-gray-700">KB4</span>
+                    <span class="text-xs text-gray-500">20%</span>
+                    <span class="text-xs font-bold text-green-600">+6</span>
+                  </div>
+                  <div class="flex flex-col items-center bg-gray-50 rounded px-3 py-1">
+                    <span class="text-xs font-medium text-gray-700">NCM</span>
+                    <span class="text-xs text-gray-500">35%</span>
+                    <span class="text-xs font-bold text-yellow-600">+18</span>
+                  </div>
+                  <div class="flex flex-col items-center bg-gray-50 rounded px-3 py-1">
+                    <span class="text-xs font-medium text-gray-700">EDR</span>
+                    <span class="text-xs text-gray-500">30%</span>
+                    <span class="text-xs font-bold text-orange-600">+12</span>
+                  </div>
+                  <div class="flex flex-col items-center bg-gray-50 rounded px-3 py-1">
+                    <span class="text-xs font-medium text-gray-700">HIBP</span>
+                    <span class="text-xs text-gray-500">15%</span>
+                    <span class="text-xs font-bold text-green-600">+6</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trend Chart -->
+          <div class="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">風險趨勢 (14天)</h3>
+            <div class="h-64">
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Source Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
+          <!-- KB4 Card -->
+          <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-4">
+              <div class="p-3 bg-blue-500 rounded-lg">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="text-right">
+                  <div class="text-xs text-gray-500">風險分</div>
+                  <div class="text-sm font-bold text-green-600">28</div>
+                </div>
+                <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">查看詳情 →</a>
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">KB4 釣魚風險</h3>
+            <div class="mb-4">
+              <span class="text-3xl font-bold text-gray-900">23</span>
+              <span class="ml-2 text-sm text-gray-500">高風險用戶</span>
+            </div>
+            <!-- Score bar -->
+            <div class="mb-4">
+              <div class="flex justify-between text-xs text-gray-500 mb-1">
+                <span>風險程度</span>
+                <span>權重 20% (+6)</span>
+              </div>
+              <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-green-500 rounded-full" style="width: 28%"></div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">總用戶數</p>
+                <p class="text-lg font-semibold text-gray-900">1,247</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">平均風險</p>
+                <p class="text-lg font-semibold text-gray-900">18.5</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">高風險比例</p>
+                <p class="text-lg font-semibold text-green-600">1.8%</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">易受騙率</p>
+                <p class="text-lg font-semibold text-gray-900">12.3%</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- NCM Card -->
+          <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-4">
+              <div class="p-3 bg-orange-500 rounded-lg">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/>
+                </svg>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="text-right">
+                  <div class="text-xs text-gray-500">風險分</div>
+                  <div class="text-sm font-bold text-yellow-600">52</div>
+                </div>
+                <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">查看詳情 →</a>
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">NCM 設備漏洞</h3>
+            <div class="mb-4">
+              <span class="text-3xl font-bold text-red-600">8</span>
+              <span class="ml-2 text-sm text-gray-500">P0 緊急設備</span>
+            </div>
+            <!-- Score bar -->
+            <div class="mb-4">
+              <div class="flex justify-between text-xs text-gray-500 mb-1">
+                <span>風險程度</span>
+                <span>權重 35% (+18)</span>
+              </div>
+              <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-yellow-500 rounded-full" style="width: 52%"></div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">總設備數</p>
+                <p class="text-lg font-semibold text-gray-900">156</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">P1 設備</p>
+                <p class="text-lg font-semibold text-yellow-600">24</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">平均 CVSS</p>
+                <p class="text-lg font-semibold text-red-600">7.2</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">CVE 總數</p>
+                <p class="text-lg font-semibold text-gray-900">342</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- EDR Card -->
+          <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-4">
+              <div class="p-3 bg-red-500 rounded-lg">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="text-right">
+                  <div class="text-xs text-gray-500">風險分</div>
+                  <div class="text-sm font-bold text-orange-600">41</div>
+                </div>
+                <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">查看詳情 →</a>
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">EDR 威脅警示</h3>
+            <div class="mb-4">
+              <span class="text-3xl font-bold text-orange-600">17</span>
+              <span class="ml-2 text-sm text-gray-500">待處理警示</span>
+            </div>
+            <!-- Score bar -->
+            <div class="mb-4">
+              <div class="flex justify-between text-xs text-gray-500 mb-1">
+                <span>風險程度</span>
+                <span>權重 30% (+12)</span>
+              </div>
+              <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-orange-500 rounded-full" style="width: 41%"></div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">總警示數</p>
+                <p class="text-lg font-semibold text-gray-900">89</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">High+</p>
+                <p class="text-lg font-semibold text-red-600">12</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">已解決</p>
+                <p class="text-lg font-semibold text-green-600">67</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">待處理率</p>
+                <p class="text-lg font-semibold text-gray-900">19%</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- HIBP Card -->
+          <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-4">
+              <div class="p-3 bg-purple-500 rounded-lg">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                </svg>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="text-right">
+                  <div class="text-xs text-gray-500">風險分</div>
+                  <div class="text-sm font-bold text-orange-600">40</div>
+                </div>
+                <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">查看詳情 →</a>
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">HIBP 帳號外洩</h3>
+            <div class="mb-4">
+              <span class="text-3xl font-bold text-purple-600">4</span>
+              <span class="ml-2 text-sm text-gray-500">待處理外洩</span>
+            </div>
+            <!-- Score bar -->
+            <div class="mb-4">
+              <div class="flex justify-between text-xs text-gray-500 mb-1">
+                <span>風險程度</span>
+                <span>權重 15% (+6)</span>
+              </div>
+              <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-orange-500 rounded-full" style="width: 40%"></div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">總外洩數</p>
+                <p class="text-lg font-semibold text-gray-900">31</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">近期發現</p>
+                <p class="text-lg font-semibold text-yellow-600">2</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">已通知</p>
+                <p class="text-lg font-semibold text-gray-900">15</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <p class="text-xs text-gray-500 mb-1">已解決</p>
+                <p class="text-lg font-semibold text-green-600">12</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sync Status -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">同步狀態</h3>
+          <div class="flex flex-wrap gap-6">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              <span class="font-medium">KB4:</span>
+              <span class="text-gray-600">1,247 筆</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              <span class="font-medium">NCM:</span>
+              <span class="text-gray-600">156 筆</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              <span class="font-medium">EDR:</span>
+              <span class="text-gray-600">89 筆</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              <span class="font-medium">HIBP:</span>
+              <span class="text-gray-600">31 筆</span>
+            </div>
+            <div class="ml-auto text-gray-500 text-sm">
+              最後同步: 2026/02/08 10:15:32
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Trend Chart
+    const ctx = document.getElementById('trendChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['1/26', '1/27', '1/28', '1/29', '1/30', '1/31', '2/1', '2/2', '2/3', '2/4', '2/5', '2/6', '2/7', '2/8'],
+        datasets: [{
+          label: '風險指數',
+          data: [38, 42, 45, 52, 48, 45, 43, 47, 51, 48, 44, 41, 43, 42],
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#3b82f6',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            grid: {
+              color: '#f3f4f6'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
