@@ -63,10 +63,13 @@ export async function edrRoutes(app: FastifyInstance) {
   });
 
   // GET /api/edr/alerts/:id - 單一警示
-  app.get('/api/edr/alerts/:id', async (request) => {
+  app.get('/api/edr/alerts/:id', async (request, reply) => {
     const { id } = request.params as { id: string };
     const alert = await prisma.eDRAlert.findUnique({ where: { id } });
-    if (!alert) return { error: 'Alert not found', statusCode: 404 };
+    if (!alert) {
+      reply.code(404).send({ error: 'Alert not found' });
+      return;
+    }
     return alert;
   });
 
@@ -91,7 +94,12 @@ export async function edrRoutes(app: FastifyInstance) {
 
   // POST /api/edr/alerts/bulk-update - 批次更新狀態
   app.post('/api/edr/alerts/bulk-update', async (request) => {
-    const { ids, status, assignedTo } = request.body as { ids: string[]; status: string; assignedTo?: string };
+    const bulkUpdateSchema = z.object({
+      ids: z.array(z.string()).min(1),
+      status: z.enum(['new', 'investigating', 'resolved', 'false_positive']),
+      assignedTo: z.string().optional(),
+    });
+    const { ids, status, assignedTo } = bulkUpdateSchema.parse(request.body);
 
     const updateData: any = { status };
     if (assignedTo) updateData.assignedTo = assignedTo;

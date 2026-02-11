@@ -113,11 +113,13 @@ export function LoginPage() {
           </form>
 
           {/* Default Credentials Hint (Development Only) */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-500 text-center">
-              Default admin account: <span className="font-mono text-gray-700">admin@wt.com</span> / <span className="font-mono text-gray-700">admin123</span>
-            </p>
-          </div>
+          {import.meta.env.DEV && (
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <p className="text-xs text-gray-500 text-center">
+                Default admin account: <span className="font-mono text-gray-700">admin@wt.com</span> / <span className="font-mono text-gray-700">admin123</span>
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Footer */}

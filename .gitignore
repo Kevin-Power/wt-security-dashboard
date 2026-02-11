@@ -6,6 +6,15 @@ node_modules/
 dist/
 build/
 .next/
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+# Turborepo
+.turbo/
+
+# Test coverage
+coverage/
 
 # Environment
 .env

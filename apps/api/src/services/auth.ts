@@ -211,15 +211,17 @@ export async function createInitialAdmin(): Promise<void> {
   });
 
   if (!adminExists) {
-    const hashedPassword = await hashPassword('admin123');
+    const adminEmail = env.INITIAL_ADMIN_EMAIL;
+    const adminPassword = env.INITIAL_ADMIN_PASSWORD;
+    const hashedPassword = await hashPassword(adminPassword);
     await prisma.user.create({
       data: {
-        email: 'admin@wt.com',
+        email: adminEmail,
         password: hashedPassword,
         name: 'Administrator',
         role: 'admin',
       },
     });
-    console.log('Initial admin user created: admin@wt.com / admin123');
+    console.log(`Initial admin user created: ${adminEmail}`);
   }
 }

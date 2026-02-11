@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { LucideIcon } from 'lucide-react';
@@ -19,9 +20,9 @@ export function SourceCard({ title, icon: Icon, mainValue, mainLabel, stats, col
         <div className={cn('p-3 rounded-lg', color)}>
           <Icon className="w-6 h-6 text-white" />
         </div>
-        <a href={href} className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+        <Link to={href} className="text-sm text-primary-600 hover:text-primary-700 font-medium">
           查看詳情 →
-        </a>
+        </Link>
       </div>
       
       <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>

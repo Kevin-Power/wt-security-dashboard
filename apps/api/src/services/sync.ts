@@ -87,44 +87,47 @@ export async function syncNCM(): Promise<SyncResult> {
   try {
     const rawData = await googleSheetsService.getNCMData();
     
-    // 先清除舊資料（因為 NCM 是整批更新）
-    await prisma.nCMDevice.deleteMany({});
-    
-    let count = 0;
-    for (const row of rawData) {
-      if (!row.AllDeviceNames) continue;
+    // 使用 transaction 確保原子性：先清除再插入
+    const count = await prisma.$transaction(async (tx) => {
+      await tx.nCMDevice.deleteMany({});
       
-      // NCM 一行可能包含多個設備
-      const deviceNames = row.AllDeviceNames.split('; ');
-      const deviceIps = row.AllDeviceIPs?.split('; ') || [];
-      
-      for (let i = 0; i < deviceNames.length; i++) {
-        const deviceName = deviceNames[i]?.trim();
-        if (!deviceName) continue;
+      let insertCount = 0;
+      for (const row of rawData) {
+        if (!row.AllDeviceNames) continue;
         
-        // 從 IP 字串中提取 IP (格式: "DeviceName(IP)")
-        const ipMatch = deviceIps[i]?.match(/\(([^)]+)\)/);
-        const deviceIp = ipMatch ? ipMatch[1] : null;
+        // NCM 一行可能包含多個設備
+        const deviceNames = row.AllDeviceNames.split('; ');
+        const deviceIps = row.AllDeviceIPs?.split('; ') || [];
         
-        await prisma.nCMDevice.create({
-          data: {
-            deviceName,
-            deviceIp,
-            hwModel: row.HW_Models || null,
-            fwSeries: row.FW_Series || null,
-            fwVersion: row.FW_Version || null,
-            updatePriority: row.UpdatePriority || 'P3-Monitor',
-            totalCveInstances: parseInt(row.TotalCVEInstances) || 0,
-            maxKevActiveExploit: parseInt(row.MaxKEV_ActiveExploit) || 0,
-            maxCriticalCve: parseInt(row.MaxCriticalCVE) || 0,
-            maxCvss: parseFloat(row.MaxCVSS) || 0,
-            actionRequired: row.ActionRequired || null,
-            syncedAt: new Date(),
-          },
-        });
-        count++;
+        for (let i = 0; i < deviceNames.length; i++) {
+          const deviceName = deviceNames[i]?.trim();
+          if (!deviceName) continue;
+          
+          // 從 IP 字串中提取 IP (格式: "DeviceName(IP)")
+          const ipMatch = deviceIps[i]?.match(/\(([^)]+)\)/);
+          const deviceIp = ipMatch ? ipMatch[1] : null;
+          
+          await tx.nCMDevice.create({
+            data: {
+              deviceName,
+              deviceIp,
+              hwModel: row.HW_Models || null,
+              fwSeries: row.FW_Series || null,
+              fwVersion: row.FW_Version || null,
+              updatePriority: row.UpdatePriority || 'P3-Monitor',
+              totalCveInstances: parseInt(row.TotalCVEInstances) || 0,
+              maxKevActiveExploit: parseInt(row.MaxKEV_ActiveExploit) || 0,
+              maxCriticalCve: parseInt(row.MaxCriticalCVE) || 0,
+              maxCvss: parseFloat(row.MaxCVSS) || 0,
+              actionRequired: row.ActionRequired || null,
+              syncedAt: new Date(),
+            },
+          });
+          insertCount++;
+        }
       }
-    }
+      return insertCount;
+    });
     
     const duration = Date.now() - startTime;
     await logSync('ncm', 'success', count, duration);
@@ -255,17 +258,13 @@ export interface SyncAllResult {
 }
 
 export async function syncAll(): Promise<SyncAllResult> {
-  const results: SyncAllResult = {
-    kb4: { success: false, count: 0, duration: 0 },
-    ncm: { success: false, count: 0, duration: 0 },
-    edr: { success: false, count: 0, duration: 0 },
-    hibp: { success: false, count: 0, duration: 0 },
-  };
+  // Run all syncs in parallel for better performance
+  const [kb4, ncm, edr, hibp] = await Promise.all([
+    syncKB4(),
+    syncNCM(),
+    syncEDR(),
+    syncHIBP(),
+  ]);
   
-  results.kb4 = await syncKB4();
-  results.ncm = await syncNCM();
-  results.edr = await syncEDR();
-  results.hibp = await syncHIBP();
-  
-  return results;
+  return { kb4, ncm, edr, hibp };
 }

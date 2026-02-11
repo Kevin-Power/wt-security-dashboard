@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import { env } from './config/index.js';
 import { startSyncJobs, manualSync } from './jobs/sync-job.js';
 import { prisma } from './services/db.js';
+import { authenticate, authorize } from './middleware/auth.js';
 
 // Routes
 import { authRoutes } from './routes/auth.js';
@@ -51,17 +52,23 @@ app.get('/api', async () => ({
   },
 }));
 
-// Register routes
+// Public routes
 await app.register(authRoutes, { prefix: '/api/auth' });
-await app.register(dashboardRoutes);
-await app.register(kb4Routes);
-await app.register(ncmRoutes);
-await app.register(edrRoutes);
-await app.register(hibpRoutes);
-await app.register(trendsRoutes);
 
-// 手動觸發同步 API
-app.post('/api/sync', async (request) => {
+// Protected routes - require authentication
+app.register(async function protectedRoutes(instance) {
+  instance.addHook('onRequest', authenticate);
+
+  await instance.register(dashboardRoutes);
+  await instance.register(kb4Routes);
+  await instance.register(ncmRoutes);
+  await instance.register(edrRoutes);
+  await instance.register(hibpRoutes);
+  await instance.register(trendsRoutes);
+});
+
+// 手動觸發同步 API (admin only)
+app.post('/api/sync', { preHandler: [authenticate, authorize('admin')] }, async (request) => {
   const { source = 'all' } = request.query as { source?: string };
   
   if (source in manualSync) {
@@ -73,8 +80,8 @@ app.post('/api/sync', async (request) => {
   return { error: `Invalid source: ${source}. Valid: all, kb4, ncm, edr, hibp` };
 });
 
-// 取得同步日誌
-app.get('/api/sync/logs', async (request) => {
+// 取得同步日誌 (authenticated)
+app.get('/api/sync/logs', { preHandler: [authenticate] }, async (request) => {
   const { limit = '50' } = request.query as { limit?: string };
   
   const logs = await prisma.syncLog.findMany({

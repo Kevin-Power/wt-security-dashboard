@@ -50,10 +50,13 @@ export async function ncmRoutes(app: FastifyInstance) {
   });
 
   // GET /api/ncm/devices/:id - 單一設備
-  app.get('/api/ncm/devices/:id', async (request) => {
+  app.get('/api/ncm/devices/:id', async (request, reply) => {
     const { id } = request.params as { id: string };
     const device = await prisma.nCMDevice.findUnique({ where: { id } });
-    if (!device) return { error: 'Device not found', statusCode: 404 };
+    if (!device) {
+      reply.code(404).send({ error: 'Device not found' });
+      return;
+    }
     return device;
   });
 

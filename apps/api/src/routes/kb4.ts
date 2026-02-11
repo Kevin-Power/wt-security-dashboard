@@ -72,11 +72,12 @@ export async function kb4Routes(app: FastifyInstance) {
   });
 
   // GET /api/kb4/users/:id - 單一用戶
-  app.get('/api/kb4/users/:id', async (request) => {
+  app.get('/api/kb4/users/:id', async (request, reply) => {
     const { id } = request.params as { id: string };
     const user = await prisma.kB4User.findUnique({ where: { id } });
     if (!user) {
-      return { error: 'User not found', statusCode: 404 };
+      reply.code(404).send({ error: 'User not found' });
+      return;
     }
     return user;
   });

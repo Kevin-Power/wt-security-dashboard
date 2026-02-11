@@ -59,10 +59,13 @@ export async function hibpRoutes(app: FastifyInstance) {
   });
 
   // GET /api/hibp/breaches/:id - 單一外洩記錄
-  app.get('/api/hibp/breaches/:id', async (request) => {
+  app.get('/api/hibp/breaches/:id', async (request, reply) => {
     const { id } = request.params as { id: string };
     const breach = await prisma.hIBPBreach.findUnique({ where: { id } });
-    if (!breach) return { error: 'Breach not found', statusCode: 404 };
+    if (!breach) {
+      reply.code(404).send({ error: 'Breach not found' });
+      return;
+    }
     return breach;
   });
 
@@ -81,7 +84,11 @@ export async function hibpRoutes(app: FastifyInstance) {
 
   // POST /api/hibp/breaches/bulk-update - 批次更新狀態
   app.post('/api/hibp/breaches/bulk-update', async (request) => {
-    const { ids, status } = request.body as { ids: string[]; status: string };
+    const bulkUpdateSchema = z.object({
+      ids: z.array(z.string()).min(1),
+      status: z.enum(['new', 'notified', 'password_reset', 'resolved']),
+    });
+    const { ids, status } = bulkUpdateSchema.parse(request.body);
 
     const result = await prisma.hIBPBreach.updateMany({
       where: { id: { in: ids } },
